@@ -1,8 +1,8 @@
 ---
 - name: "install node exporter."
   unarchive:
-    src: 'https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz'
-    dest: '/tmp'
+    src: https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz
+    dest: /tmp
     remote_src: yes
 
 - name: "move binary to /usr/local/bin."
