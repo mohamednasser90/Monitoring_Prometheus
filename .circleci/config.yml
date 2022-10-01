@@ -111,6 +111,7 @@ jobs:
   #             --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
   #             --region us-east-1
     # Exercise: Config and Deployment 54.236.42.43
+    
   configure_infrastructure: 
     docker:
       - image: python:3.7-alpine3.11
@@ -120,7 +121,7 @@ jobs:
               # You can get this ID in the section where you registered the SSH Key apk add --update   --no-cache  ansible   
             #  pip3 install awscli
               fingerprints: ["f9:0f:73:86:1e:3a:48:58:bd:78:6b:15:d6:5a:6e:3e"] 
-       # attach workspace
+       # attach workspace83005836cccbd410150ef53742c16982
       # - attach_workspace:
       #     at: ~/  
 
