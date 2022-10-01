@@ -111,7 +111,7 @@ jobs:
   #             --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
   #             --region us-east-1
     # Exercise: Config and Deployment 54.236.42.43
-    
+
   configure_infrastructure: 
     docker:
       - image: python:3.7-alpine3.11
@@ -122,8 +122,8 @@ jobs:
             #  pip3 install awscli
               fingerprints: ["f9:0f:73:86:1e:3a:48:58:bd:78:6b:15:d6:5a:6e:3e"] 
        # attach workspace
-      - attach_workspace:
-          at: ~/        
+      # - attach_workspace:
+      #     at: ~/        
       - run:
           name: Install Ansible
           command: |             
@@ -148,9 +148,8 @@ jobs:
       #       pip install awscli
       - run:
           name: Configure server
-          command: |
-            cd .circleci/ansible
-            ansible-playbook -i inventory.txt main_configure_server.yml 
+          command: |           
+            ansible-playbook -i ./.circleci/ansible/inventory.txt ./.circleci/ansible/main_configure_server.yml 
       # - destroy_environments      
 
   # smoke_test:
