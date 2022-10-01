@@ -1,9 +1,4 @@
 ---
-- name: "update apt packages."
-  become: yes
-  apt:
-    update_cache: yes
-
 - name: "upgrade packages"
   become: yes
   apt:
@@ -22,4 +17,10 @@
     name: pm2
     global: yes
     production: yes
-    state: present    
+    state: present  
+
+    # - name: "update apt packages."
+#   become: yes
+#   apt:
+#     update_cache: yes
+  
