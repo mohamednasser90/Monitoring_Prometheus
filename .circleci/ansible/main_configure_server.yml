@@ -7,13 +7,13 @@
   become: true
   become_method: sudo
   become_user: root  
-  # pre_tasks:
-  #   - name: Install Python if not already present.
-  #     raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
-  #     changed_when: False
+  pre_tasks:
+    - name: Install Python if not already present.
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+      changed_when: False
 
-  #   - name: Gather facts after Python is definitely present.
-  #     setup:
+    - name: Gather facts after Python is definitely present.
+      setup:
   # gather_facts: false
   # vars:
   #   - ansible_python_interpreter: /usr/bin/python3
