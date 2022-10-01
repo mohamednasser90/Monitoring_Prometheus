@@ -3,13 +3,13 @@
   hosts: EC2
   gather_facts: no
 
-  pre_tasks:
-    - name: Install Python if not already present.
-      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
-      changed_when: False
+  # pre_tasks:
+  #   - name: Install Python if not already present.
+  #     raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+  #     changed_when: False
 
-    - name: Gather facts after Python is definitely present.
-      setup:
+  #   - name: Gather facts after Python is definitely present.
+  #     setup:
 
   # roles:
 
@@ -60,7 +60,7 @@
     # Add more env vars here
 
   roles:
+    - configure_server
     - prometheus_node_exporter
-    # - configure_server
 
     # Your code here   
