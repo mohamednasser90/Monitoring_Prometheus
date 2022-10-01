@@ -2,16 +2,19 @@
 - name: Ansible Create user functionlity module demo
   hosts: EC2
 # Defining the remote server where the ansible create user module will manage the objects
-  remote_user: ubuntu   # Using Remote user as ubuntu
+ # group: sudo
+        # password: '$6$kjPn3KClxO.Lujw$BjDr2y4vvJK3Q.C/nLET.A/FD9OxN6DNASmLetapq9LiXVVlTrYnvlEGuITZiVkV3JhX.vbsZ68/hnbdRsYnx1'
+        # Using Remote user as ubuntu
+  remote_user: ubuntu   
   tasks:
     - name: Add the user 'node_exporter' with a specific uid and a primary group of 'sudo'
       ansible.builtin.user:
         name: node_exporter
         comment: node_exporter_user
         uid: 1053
-        # group: sudo
-        # password: '$6$kjPn3KClxO.Lujw$BjDr2y4vvJK3Q.C/nLET.A/FD9OxN6DNASmLetapq9LiXVVlTrYnvlEGuITZiVkV3JhX.vbsZ68/hnbdRsYnx1'
-        createhome: no     # Defaults to yes
+       
+        createhome: no    
+         # Defaults to yes
         # home: /home/node_exporter    # Defaults to /home/<username>
 
 - name: "install node exporter."
