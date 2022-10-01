@@ -1,0 +1,273 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+# Use a package of configuration called an orb.
+orbs:
+  # Choose either one of the orbs below
+  # Declare a dependency on the welcome-orb
+  # welcome: circleci/welcome-orb@0.4.1
+  aws-cli: circleci/aws-cli@2.0.3
+# Orchestrate or schedule a set of jobs
+# reusable job code
+commands:
+# Exercise: Reusable Job Code
+  print_pipeline_id:
+    parameters:
+      id: 
+        type: string
+    steps:
+      - run: echo << parameters.id >>
+
+  destroy_environments:
+    steps:
+      - run:
+          name: destroy  environment
+          when: on_fail          
+          command: |
+            aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:7}
+jobs:    
+  # create_infrastructure: 
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   steps:
+  #     - checkout
+  #     - run: yum install tar gzip -y
+  #     - run:
+  #         name: Create Cloudformation Stack
+  #         command: |
+  #           aws cloudformation deploy \
+  #             --template-file .circleci/files/template.yml \
+  #             --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:7} \
+  #             --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"     
+  #     - run:
+  #         name: Add back-end ip to ansible inventory
+  #         command: |
+  #           Server_IP=$(aws ec2 describe-instances \
+  #             --filters "Name=tag:Name,Values=udacity-${CIRCLE_WORKFLOW_ID:0:7}" \
+  #             --query 'Reservations[*].Instances[*].PublicIpAddress' \
+  #             --output text)
+  #           echo $Server_IP >> .circleci/ansible/inventory.txt
+  #           cat .circleci/ansible/inventory.txt
+
+  #     - run:
+  #         name: Save workflow id to workspace
+  #         command: |
+  #           echo $CIRCLE_WORKFLOW_ID > workflow_id.txt
+  #           cat workflow_id.txt
+  #     - persist_to_workspace:
+  #         root: ~/
+  #         paths:
+  #           - project/.circleci/ansible/inventory.txt
+  #           - project/workflow_id.txt
+  #     - destroy_environments
+
+      # - run:   --parameters ParameterKey=ID,ParameterValue=${CIRCLE_WORKFLOW_ID:0:5}   --region us-east-1  
+      #     name: Add back-end ip to ansible inventory
+      #     command: |
+      #       aws ec2 describe-instances \
+      #       --query 'Reservations[*].Instances[*].PublicIpAddress' \
+      #       --filters "Name=tag:Project,Values=UdaPeople-BackEnd-${CIRCLE_WORKFLOW_ID:0:7}" \
+      #       --output text >> .circleci/ansible/inventory.txt
+      # - run: cat .circleci/ansible/inventory.txt
+      # - persist_to_workspace:
+      #     root: ~/
+      #     paths:
+      #       - project/.circleci/ansible/inventory.txt
+
+      # - run:
+      #     name: Retrive beckend ip (save it to ansible inventory)
+      #     command: |
+      #       BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
+      #         --filters "Name=tag:Name,Values=udacity-${CIRCLE_WORKFLOW_ID:0:5}" \
+      #         --query 'Reservations[*].Instances[*].PublicIpAddress' \
+      #         --output text)
+      #       export API_URL="http://${BACKEND_PUBLIC_IP}:3030"
+      #       echo "${API_URL}"
+      #       echo "[all]" >> .circleci/ansible/inventory.txt
+      #       echo "$BACKEND_PUBLIC_IP" >> .circleci/ansible/inventory.txt
+      # - run:
+      #     name: Save Backend URL
+      #     when: on_success
+      #     command: |
+      #       aws ec2 describe-instances  \
+      #         --filters "Name=tag:Name,Values=udacity-${CIRCLE_WORKFLOW_ID:0:5}" \
+      #         --query "Reservations[*].Instances[*].PublicIpAddress" \
+      #         --output text >> ~/project/.circleci/ansible/inventory.txt           
+      # - persist_to_workspace:
+      #     root: ~/
+      #     paths:
+      #       - project/.circleci/ansible/inventory.txt     
+                   
+
+  # create_infrastructure: 
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Create Cloudformation Stack
+  #         command: |
+  #           aws cloudformation deploy \
+  #             --template-file ./template.yml \
+  #             --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
+  #             --region us-east-1
+    # Exercise: Config and Deployment 54.236.42.43
+  configure_infrastructure: 
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+              # You can get this ID in the section where you registered the SSH Key
+              fingerprints: ["f9:0f:73:86:1e:3a:48:58:bd:78:6b:15:d6:5a:6e:3e"] 
+       # attach workspace
+      - attach_workspace:
+          at: ~/        
+      - run:
+          name: Install Ansible
+          command: |
+             apk add --update   --no-cache  ansible   
+             pip3 install awscli
+ #  tar gzip aws-cli
+            #  pip install --upgrade pip
+      # - run:
+      #     name: Run Playbook and Configure server
+      #     # command: |
+      #     command: |
+      #       pwd
+      #       cd .circleci/ansible
+      #       ls -al
+      #       ansible-playbook -i inventory.txt main.yml
+
+      # - run:
+      #     name: Install dependencies
+      #     command: |
+      #       pip install --user ansible 
+      #       pip install awscli
+      - run:
+          name: Configure server
+          command: |
+            cd .circleci/ansible
+            ansible-playbook -i inventory.txt main_configure_server.yml 
+      # - destroy_environments      
+
+  # smoke_test:
+  #   docker:
+  #     - image: alpine:latest
+  #   steps:
+  #     - run: apk add --update  --no-cache curl aws-cli
+  #     # - run: apk add --no-cache aws-cli
+  #     - run:
+  #         name: smoke test
+  #         command: |
+  #           URL="https://blog.udacity.com/"
+  #           if curl -s --head ${URL}
+  #           then 
+  #             return 0
+  #           else
+  #             return 1
+  #           fi    
+  #     - destroy_environments   
+
+
+  # Job 1
+  # Executes the bucket.yml - Deploy an S3 bucket, and interface with that bucket to synchronize the files between local and the bucket.
+  # Note that the `--parameter-overrides` let you specify a value that override parameter value in the bucket.yml template file.
+  # create_and_deploy_front_end:
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Execute bucket.yml - Create Cloudformation Stack
+  #         command: |
+  #           aws cloudformation deploy \
+  #           --template-file .circleci/files/bucket.yml \
+  #           --stack-name stack-create-bucket-${CIRCLE_WORKFLOW_ID:0:7} \
+  #           --parameter-overrides MyBucketName="mybucket-${CIRCLE_WORKFLOW_ID:0:7}"
+  #     # Uncomment the step below if yoou wish to upload all contents of the current directory to the S3 bucket
+  #     # - run: aws s3 sync . s3://mybucket-${CIRCLE_WORKFLOW_ID:0:7} --delete
+  
+  # # Exercise: Promote to Production - Job 2
+  # # Fetch and save the pipeline ID (bucket ID) responsible for the last release.
+  # get_last_deployment_id:
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   steps:
+  #     - checkout
+  #     - run: yum install -y tar gzip
+  #     - run:
+  #         name: Fetch and save the old pipeline ID (bucket name) responsible for the last release.
+  #         command: |
+  #           aws cloudformation \
+  #           list-exports --query "Exports[?Name==\`PipelineID\`].Value" \
+  #           --no-paginate --output text > ~/textfile.txt
+  #     - persist_to_workspace:
+  #         root: ~/
+  #         paths: 
+  #           - textfile.txt 
+  
+  # # Exercise: Promote to Production - Job 3
+  # # Executes the cloudfront.yml template that will modify the existing CloudFront Distribution, change its target from the old bucket to the new bucket - `mybucket-${CIRCLE_WORKFLOW_ID:0:7}`. 
+  # # Notice here we use the stack name `production-distro` which is the same name we used while deploying to the S3 bucket manually.
+  # promote_to_production:
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Execute cloudfront.yml
+  #         command: |
+  #           aws cloudformation deploy \
+  #           --template-file .circleci/files/cloudfront.yml \
+  #           --stack-name production-distro \
+  #           --parameter-overrides PipelineID="mybucket-${CIRCLE_WORKFLOW_ID:0:7}" 
+  # # Exercise: Promote to Production - Job 4
+  # # Destroy the previous production version's S3 bucket and CloudFormation stack. 
+  # clean_up_old_front_end:
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   steps:
+  #     - checkout
+  #     - run: yum install -y tar gzip
+  #     - attach_workspace:
+  #         at: ~/
+  #     - run:
+  #         name: Destroy the previous production version's S3 bucket and CloudFormation stack. 
+  #         # Use $OldBucketID environment variable or mybucket644752792305 below.
+  #         # Similarly, you can create and use $OldStackID environment variable in place of production-distro 
+  #         command: |
+  #           export OldBucketID=$(cat ~/textfile.txt)
+  #           aws s3 rm "s3://${OldBucketID}" --recursive
+  #         #  aws cloudformation delete-stack --stack-name production-distro 
+  #         #  aws cloudformation delete-stack --stack-name stack-create-bucket-${CIRCLE_WORKFLOW_ID:0:7}
+  #         #  aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
+
+           
+#aws cloudformation delete-stack --stack-name 
+workflows:
+  # Name the workflow "welcome"
+  my_workflow:
+    # Run the welcome/run job in its own container
+    jobs:      
+      # - create_infrastructure:
+      #     filters:
+      #       branches:
+      #         only:
+      #           - master
+      - configure_infrastructure
+          # requires:
+          #   - create_infrastructure
+      # - smoke_test:
+      #     requires:
+      #       - configure_infrastructure   
+
+      # - create_and_deploy_front_end
+      # - promote_to_production:
+      #     requires: 
+      #       - create_and_deploy_front_end
+      # - get_last_deployment_id
+      # - clean_up_old_front_end:
+      #     requires:
+      #       - get_last_deployment_id
+      #       - promote_to_production          
+      

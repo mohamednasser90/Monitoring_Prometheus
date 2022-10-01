@@ -1,0 +1,43 @@
+---
+- name: Ansible Create user functionlity module demo
+  hosts: web
+# Defining the remote server where the ansible create user module will manage the objects
+  remote_user: ubuntu   # Using Remote user as ubuntu
+  tasks:
+    - name: Add the user 'node_exporter' with a specific uid and a primary group of 'sudo'
+      ansible.builtin.user:
+        name: node_exporter
+        comment: node_exporter_user
+        uid: 1053
+        # group: sudo
+        # password: '$6$kjPn3KClxO.Lujw$BjDr2y4vvJK3Q.C/nLET.A/FD9OxN6DNASmLetapq9LiXVVlTrYnvlEGuITZiVkV3JhX.vbsZ68/hnbdRsYnx1'
+        createhome: no     # Defaults to yes
+        # home: /home/node_exporter    # Defaults to /home/<username>
+
+- name: "install node exporter."
+  unarchive:
+    src: https://github.com/prometheus/node_exporter/releases/download/v0.17.0/node_exporter-0.17.0.linux-amd64.tar.gz
+    dest: /tmp
+    remote_src: yes
+
+- name: "move binary to /usr/local/bin."
+  become: true
+  copy:
+    src: /tmp/node_exporter-0.17.0.linux-amd64/node_exporter
+    dest: /usr/local/bin/node_exporter
+    remote_src: yes
+    mode: '0777'  # rwx  read/write/execute access as seen below to everyone
+    
+- name: "add node exporter configuration."
+  become: true
+  copy:
+    src: node_exporter.service
+    dest: /etc/systemd/system/
+
+- name: "enable node_exporter service"
+  become: true
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: node_exporter
+    enabled: yes
