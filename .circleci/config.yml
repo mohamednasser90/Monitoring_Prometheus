@@ -117,16 +117,17 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-              # You can get this ID in the section where you registered the SSH Key
+              # You can get this ID in the section where you registered the SSH Key apk add --update   --no-cache  ansible   
+            #  pip3 install awscli
               fingerprints: ["f9:0f:73:86:1e:3a:48:58:bd:78:6b:15:d6:5a:6e:3e"] 
        # attach workspace
       - attach_workspace:
           at: ~/        
       - run:
           name: Install Ansible
-          command: |
-             apk add --update   --no-cache  ansible   
-             pip3 install awscli
+          command: |             
+             apk add --update --no-cache tar gzip ansible aws-cli
+
  #  tar gzip aws-cli
             #  pip install --upgrade pip
       # - run:
