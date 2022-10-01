@@ -1,10 +1,4 @@
 ---
-- name: "upgrade apt packages"
-  become: true
-  apt:
-    upgrade: yes
-
-
 - name: "remove stale dependencies"
   become: true
   apt:
