@@ -26,21 +26,3 @@
     daemon_reload: yes
     name: node_exporter
     enabled: yes
-# - name: Ansible Create user functionlity module demo
-#   hosts: EC2
-#   remote_user: ubuntu   
-#   tasks:
-#     - name: Add the user 'node_exporter' with a specific uid and a primary group of 'sudo'
-#       ansible.builtin.user:
-#         name: node_exporter
-#         comment: node_exporter_user
-#         uid: 1053       
-#         createhome: no     sudo useradd --no-create-home node_exporter
-
-        
-# - name: Add the user 'node_exporter' with a specific uid and a primary group of 'node_exporter'
-#   ansible.builtin.user:
-#     name: node_exporter
-#     comment: node_exporter user
-#     uid: 1040
-#     group: node_exporter
