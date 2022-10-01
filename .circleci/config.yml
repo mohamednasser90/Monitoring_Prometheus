@@ -123,7 +123,8 @@ jobs:
               fingerprints: ["f9:0f:73:86:1e:3a:48:58:bd:78:6b:15:d6:5a:6e:3e"] 
        # attach workspace
       # - attach_workspace:
-      #     at: ~/        
+      #     at: ~/  
+            
       - run:
           name: Install Ansible
           command: |             
