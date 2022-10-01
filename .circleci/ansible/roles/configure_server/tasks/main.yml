@@ -1,9 +1,4 @@
 ---
-- name: "remove stale dependencies"
-  become: true
-  apt:
-    autoremove: yes
-
 - name: "install dependencies [nodejs and npm]."
   become: true
   apt:
