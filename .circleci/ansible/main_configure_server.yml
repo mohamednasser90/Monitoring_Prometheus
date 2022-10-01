@@ -1,11 +1,5 @@
 ---
-- name: ping hosts
-  ping:
-  register: connection_test
-  ignore_errors: yes
-  ignore_unreachable: yes
 
-  
 - name: "configuration play." 
   hosts: EC2
   gather_facts: no
