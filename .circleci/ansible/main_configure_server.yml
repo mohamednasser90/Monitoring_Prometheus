@@ -60,7 +60,7 @@
     # Add more env vars here
 
   roles:
+    - configure_server
     - prometheus_node_exporter
-    # - configure_server
 
     # Your code here   
