@@ -4,6 +4,7 @@
   register: connection_test
   ignore_errors: yes
   ignore_unreachable: yes
+
   
 - name: "configuration play." 
   hosts: EC2
