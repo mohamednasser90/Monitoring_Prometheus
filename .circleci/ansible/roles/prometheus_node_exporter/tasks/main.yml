@@ -1,5 +1,6 @@
 ---
-- name: "install node exporter."
+- hosts: EC2
+  gather_facts: no
   vars:
     node_exporter_version: 1.0.1
   tasks:
