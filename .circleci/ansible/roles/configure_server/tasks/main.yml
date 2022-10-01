@@ -1,9 +1,4 @@
 ---
-- name: "update local apt repo."
-  become: true
-  apt:
-    update_cache: yes
-
 - name: "upgrade apt packages"
   become: true
   apt:
