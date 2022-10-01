@@ -8,22 +8,22 @@ orbs:
   aws-cli: circleci/aws-cli@2.0.3
 # Orchestrate or schedule a set of jobs
 # reusable job code
-commands:
-# Exercise: Reusable Job Code
-  print_pipeline_id:
-    parameters:
-      id: 
-        type: string
-    steps:
-      - run: echo << parameters.id >>
+# commands:
+# # Exercise: Reusable Job Code
+#   print_pipeline_id:
+#     parameters:
+#       id: 
+#         type: string
+#     steps:
+#       - run: echo << parameters.id >>
 
-  destroy_environments:
-    steps:
-      - run:
-          name: destroy  environment
-          when: on_fail          
-          command: |
-            aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:7}
+#   destroy_environments:
+#     steps:
+#       - run:
+#           name: destroy  environment
+#           when: on_fail          
+#           command: |
+#             aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:7}
 jobs:    
   # create_infrastructure: 
   #   docker:
