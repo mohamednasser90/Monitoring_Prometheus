@@ -1,6 +1,5 @@
 ---
-- hosts: EC2
-  remote_user: ubuntu
+- name: "install node exporter."
   vars:
     node_exporter_version: 1.0.1
   tasks:
